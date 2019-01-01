@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public enum Directions
+public enum Direction
 {
     North = 1,
     South = 2,
@@ -11,27 +11,27 @@ public enum Directions
 public static class DirectionRelations
 {
 
-    public static Dictionary<Directions, int> DirectionX = new Dictionary<Directions, int>
+    public static Dictionary<Direction, int> DirectionX = new Dictionary<Direction, int>
         {
-            { Directions.North, 0 },
-            { Directions.South, 0 },
-            { Directions.East, 1 },
-            { Directions.West, -1 }
+            { Direction.North, 0 },
+            { Direction.South, 0 },
+            { Direction.East, 1 },
+            { Direction.West, -1 }
         };
 
-    public static Dictionary<Directions, int> DirectionY = new Dictionary<Directions, int>
+    public static Dictionary<Direction, int> DirectionY = new Dictionary<Direction, int>
         {
-            { Directions.North, -1 },
-            { Directions.South, 1 },
-            { Directions.East, 0 },
-            { Directions.West, 0 }
+            { Direction.North, -1 },
+            { Direction.South, 1 },
+            { Direction.East, 0 },
+            { Direction.West, 0 }
         };
 
-    public static Dictionary<Directions, Directions> Opposite = new Dictionary<Directions, Directions>
+    public static Dictionary<Direction, Direction> Opposite = new Dictionary<Direction, Direction>
         {
-            { Directions.North, Directions.South },
-            { Directions.South, Directions.North },
-            { Directions.East, Directions.West },
-            { Directions.West, Directions.East }
+            { Direction.North, Direction.South },
+            { Direction.South, Direction.North },
+            { Direction.East, Direction.West },
+            { Direction.West, Direction.East }
         };
 }

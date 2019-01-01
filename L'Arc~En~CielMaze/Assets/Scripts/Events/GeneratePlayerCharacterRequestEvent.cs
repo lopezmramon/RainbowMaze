@@ -1,18 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class GeneratePlayerCharacterRequestEvent : MonoBehaviour
+public class GeneratePlayerCharacterRequestEvent : CodeControl.Message
 {
-    // Start is called before the first frame update
-    void Start()
+    public Cell cell;
+    public Transform cellParent;
+    public GeneratePlayerCharacterRequestEvent(Cell cell, Transform cellParent)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        this.cell = cell;
+        this.cellParent = cellParent;
     }
 }

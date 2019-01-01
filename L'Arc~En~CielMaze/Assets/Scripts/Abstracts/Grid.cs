@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System;
-using System.Linq;
 using UnityEngine;
 
 public class Grid
@@ -32,8 +30,8 @@ public class Grid
 
     private void CarvePassagesFrom(int startingX, int startingY, Cell[,] cells)
     {
-        List<Directions> directionsForGrid = new List<Directions>
-            { Directions.North, Directions.South, Directions.East, Directions.West };
+        List<Direction> directionsForGrid = new List<Direction>
+            { Direction.North, Direction.South, Direction.East, Direction.West };
         directionsForGrid.Shuffle();
 
         int currentX = startingX;
@@ -44,7 +42,7 @@ public class Grid
             int nextY = currentY + DirectionRelations.DirectionY[directionsForGrid[i]];
             if (ValidCell(nextX, nextY))
             {
-                Directions oppositeDirection = DirectionRelations.Opposite[directionsForGrid[i]];
+                Direction oppositeDirection = DirectionRelations.Opposite[directionsForGrid[i]];
                 cells[currentX, currentY].walls[directionsForGrid[i]] = false;
                 cells[nextX, nextY].walls[oppositeDirection] = false;
                 cells[nextX, nextY].visited = true;
@@ -53,8 +51,32 @@ public class Grid
         }
     }
 
-    private bool ValidCell(int x, int y)
+    public bool ValidCell(int x, int y)
     {
         return (x >= 0 && y >= 0 && x < cells.GetLength(0) && y < cells.GetLength(1) && !cells[x, y].visited);
+    }
+
+    public int DistanceToCell(Cell origin, Cell destination)
+    {
+        if (origin == null) return 10000;
+        return Mathf.Abs(origin.coordinates.x - destination.coordinates.x) +
+            Mathf.Abs(origin.coordinates.y - destination.coordinates.y);
+    }
+
+    public Cell RandomCell(Cell playerCell, int minDistanceToPlayer)
+    {
+        int randomCoordinateX = Random.Range(0, cells.GetLength(0));
+        int randomCoordinateY = Random.Range(0, cells.GetLength(1));
+        if (minDistanceToPlayer > cells.GetLength(1) / 2) minDistanceToPlayer = cells.GetLength(1) / 2;
+        Cell tentativeCell = cells[randomCoordinateX, randomCoordinateY];
+        while (tentativeCell.occupied ||
+            tentativeCell.SurroundingWallAmount() == 4 ||
+            DistanceToCell(playerCell, tentativeCell) < minDistanceToPlayer)
+        {
+            randomCoordinateX = Random.Range(0, cells.GetLength(0));
+            randomCoordinateY = Random.Range(0, cells.GetLength(1));
+            tentativeCell = cells[randomCoordinateX, randomCoordinateY];
+        }
+        return tentativeCell;
     }
 }

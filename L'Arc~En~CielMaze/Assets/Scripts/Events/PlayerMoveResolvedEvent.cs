@@ -1,18 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerMoveResolvedEvent : MonoBehaviour
+﻿public class PlayerMoveResolvedEvent : CodeControl.Message
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Direction direction;
+    public bool approved;
 
-    // Update is called once per frame
-    void Update()
+    public PlayerMoveResolvedEvent(Direction direction, bool approved)
     {
-        
+        this.direction = direction;
+        this.approved = approved;
     }
 }

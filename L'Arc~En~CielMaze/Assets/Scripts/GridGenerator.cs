@@ -7,6 +7,7 @@ public class GridGenerator : MonoBehaviour
     private Grid grid;
     public GameObject tilePrefab, wallPrefab;
     public Cell[,] generatedCells;
+    public Cell playerCell;
     public Transform gridParent;
     public Material[] floorMaterials;
     private RainbowColors currentColor;
@@ -19,9 +20,9 @@ public class GridGenerator : MonoBehaviour
 
     private void OnGenerateGridRequested(GenerateGridRequestEvent obj)
     {
-        currentColor = obj.color;
-        generatedCells = grid.Generate(obj.width, obj.height);
-        GenerateVisualGrid(obj.enemyAmount, obj.exitAmount, obj.objectiveAmount);
+        currentColor = obj.level.color;
+        generatedCells = grid.Generate(obj.level.width, obj.level.height);
+        GenerateVisualGrid(obj.level.enemyAmount, obj.level.exitAmount, obj.level.objectiveAmount);
     }
 
     private void GenerateVisualGrid(int enemyAmount, int exitAmount, int objectiveAmount)
@@ -30,11 +31,10 @@ public class GridGenerator : MonoBehaviour
         {
             GameObject floorTile = GameObject.CreatePrimitive(PrimitiveType.Plane);
             floorTile.transform.SetParent(gridParent);
-            floorTile.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            floorTile.transform.localPosition = new Vector3(cell.coordinates.x, 0, cell.coordinates.y);
+            floorTile.transform.localPosition = new Vector3(cell.coordinates.x * 10, 0, cell.coordinates.y * 10);
             floorTile.name = string.Format("Tile {0}, {1}", cell.coordinates.x, cell.coordinates.y);
             floorTile.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor]);
-            foreach (KeyValuePair<Directions, bool> wall in cell.walls)
+            foreach (KeyValuePair<Direction, bool> wall in cell.walls)
             {
                 if (wall.Value)
                 {
@@ -54,16 +54,29 @@ public class GridGenerator : MonoBehaviour
                 }
             }
         }
+        ChoosePlayerCell();
         GenerateEnemies(enemyAmount);
         GenerateExit(exitAmount);
         GenerateObjectives(objectiveAmount);
+        DispatchGridGeneratedEvent();
+        DispatchPlayerPlacementRequestEvent();
+    }
+
+    private void ChoosePlayerCell()
+    {
+        playerCell = grid.RandomCell(null, 0);
     }
 
     private void GenerateObjectives(int objectiveAmount)
     {
         for (int i = 0; i < objectiveAmount; i++)
         {
-
+            Cell cell = grid.RandomCell(playerCell, 3);
+            GameObject objective = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objective.AddComponent<ObjectiveController>();
+            objective.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
+            objective.transform.SetParent(gridParent);
+            objective.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
         }
     }
 
@@ -71,7 +84,12 @@ public class GridGenerator : MonoBehaviour
     {
         for (int i = 0; i < exitAmount; i++)
         {
-
+            Cell cell = grid.RandomCell(playerCell, 5);
+            GameObject exit = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            exit.AddComponent<ExitController>();
+            exit.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
+            exit.transform.SetParent(gridParent);
+            exit.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
         }
     }
 
@@ -79,9 +97,22 @@ public class GridGenerator : MonoBehaviour
     {
         for (int i = 0; i < enemyAmount; i++)
         {
-
+            Cell cell = grid.RandomCell(playerCell, 3);
+            GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            enemy.AddComponent<EnemyController>().Initialize(new Enemy(1, EnemyType.Normal));
+            enemy.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
+            enemy.transform.SetParent(gridParent);
+            enemy.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
         }
     }
 
+    private void DispatchPlayerPlacementRequestEvent()
+    {
+        CodeControl.Message.Send(new GeneratePlayerCharacterRequestEvent(playerCell, gridParent));
+    }
 
+    private void DispatchGridGeneratedEvent()
+    {
+        CodeControl.Message.Send(new GridGeneratedEvent(generatedCells, playerCell));
+    }
 }

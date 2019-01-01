@@ -1,18 +1,11 @@
 ﻿
 public class GenerateGridRequestEvent : CodeControl.Message
 {
-    public int width, height, objectiveAmount, enemyAmount, exitAmount;
-    public RainbowColors color;
+    public Level level;
 
     public GenerateGridRequestEvent
-        (int width, int height, int objectiveAmount,
-        int enemyAmount, int exitAmount, RainbowColors color)
+        (Level level)
     {
-        this.width = width;
-        this.height = height;
-        this.objectiveAmount = objectiveAmount;
-        this.enemyAmount = enemyAmount;
-        this.exitAmount = exitAmount;
-        this.color = color;
+        this.level = level;
     }
 }

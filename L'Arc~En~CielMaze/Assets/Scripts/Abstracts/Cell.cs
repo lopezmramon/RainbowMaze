@@ -5,17 +5,32 @@ using UnityEngine;
 public class Cell
 {
     public Vector2Int coordinates;
-    public Dictionary<Directions, bool> walls;
+    public Dictionary<Direction, bool> walls;
     public bool visited;
     public bool occupied;
 
     public Cell(int x, int y)
     {
         coordinates = new Vector2Int(x, y);
-        walls = new Dictionary<Directions, bool>();
-        walls.Add(Directions.North, true);
-        walls.Add(Directions.South, true);
-        walls.Add(Directions.East, true);
-        walls.Add(Directions.West, true);
+        walls = new Dictionary<Direction, bool>();
+        walls.Add(Direction.North, true);
+        walls.Add(Direction.South, true);
+        walls.Add(Direction.East, true);
+        walls.Add(Direction.West, true);
+    }
+
+    public int SurroundingWallAmount()
+    {
+        int activeWalls = 0;
+        foreach (KeyValuePair<Direction, bool> wall in walls)
+        {
+            if (wall.Value) activeWalls++;
+        }
+        return activeWalls;
+    }
+
+    public Vector3 SpawnOverCellLocalPosition(float yPos)
+    {
+        return new Vector3(coordinates.x * 10, yPos, coordinates.y * 10);
     }
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerMoveRequestEvent : CodeControl.Message
 {
-    public Directions direction;
+    public Direction direction;
 
-    public PlayerMoveRequestEvent(Directions direction)
+    public PlayerMoveRequestEvent(Direction direction)
     {
         this.direction = direction;
     }

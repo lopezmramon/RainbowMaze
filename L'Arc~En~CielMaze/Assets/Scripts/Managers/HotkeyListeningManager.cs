@@ -13,21 +13,21 @@ public class HotkeyListeningManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W))
         {
-            inputMessenger.DispatchPlayerMoveRequestEvent(Directions.North);
+            inputMessenger.DispatchPlayerMoveRequestEvent(Direction.South);
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.S))
         {
-            inputMessenger.DispatchPlayerMoveRequestEvent(Directions.South);
+            inputMessenger.DispatchPlayerMoveRequestEvent(Direction.North);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKeyDown(KeyCode.D))
         {
-            inputMessenger.DispatchPlayerMoveRequestEvent(Directions.East);
+            inputMessenger.DispatchPlayerMoveRequestEvent(Direction.East);
         }
-        else if (Input.GetKey(KeyCode.A))
+        else if (Input.GetKeyDown(KeyCode.A))
         {
-            inputMessenger.DispatchPlayerMoveRequestEvent(Directions.West);
+            inputMessenger.DispatchPlayerMoveRequestEvent(Direction.West);
         }
     }
 
