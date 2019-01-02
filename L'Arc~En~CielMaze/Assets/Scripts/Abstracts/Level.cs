@@ -1,9 +1,9 @@
 ﻿public class Level
 {
     public int width, height, objectiveAmount, enemyAmount, exitAmount;
-    public RainbowColors color;
+    public RainbowColor color;
 
-    public Level(int width, int height, int objectiveAmount, int enemyAmount, int exitAmount, RainbowColors color)
+    public Level(int width, int height, int objectiveAmount, int enemyAmount, int exitAmount, RainbowColor color)
     {
         this.width = width;
         this.height = height;

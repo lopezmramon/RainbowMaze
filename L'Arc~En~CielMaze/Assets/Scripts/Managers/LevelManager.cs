@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
@@ -13,12 +14,14 @@ public class LevelManager : MonoBehaviour
     {
         CodeControl.Message.AddListener<ObjectiveCollectedEvent>(OnObjectiveCollected);
         CodeControl.Message.AddListener<PlayerMoveResolvedEvent>(OnPlayerMoveResolved);
+        CodeControl.Message.AddListener<ExitContactEvent>(OnExitContact);
     }
 
     private void Start()
     {
-        currentLevel = new Level(10, 10, 5, 5, 1, RainbowColors.Violet);
+        currentLevel = new Level(10, 10, 5, 5, 1, RainbowColor.Violet);
         DispatchGridRequestEvent();
+        DispatchPlayMusicRequestEvent();
     }
 
     private void Update()
@@ -39,25 +42,53 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    private void OnExitContact(ExitContactEvent obj)
+    {
+        if (currentLevel.objectiveAmount > objectivesCollected) return;
+        DispatchLevelCompleteEvent();
+        countingTime = false;
+    }
+
     private void OnObjectiveCollected(ObjectiveCollectedEvent obj)
     {
         objectivesCollected++;
         Destroy(obj.transform.gameObject);
         if (currentLevel.objectiveAmount <= objectivesCollected)
         {
-            DispatchLevelCompleteEvent();
-            countingTime = false;
+            DispatchAllObjectivesCollectedEvent();
+            DispatchPlaySFXRequestEvent("objectivescollected", 0.7f);
         }
+        else
+        {
+            DispatchPlaySFXRequestEvent("objective" + objectivesCollected.ToString(), 0.4f);
+        }
+    }
+
+    private void DispatchAllObjectivesCollectedEvent()
+    {
+        CodeControl.Message.Send(new AllObjectivesCollectedEvent());
     }
 
     private void DispatchLevelCompleteEvent()
     {
         Debug.Log(string.Format("Level Completed. Time: {0}, Steps: {1}", timePlayingLevel, stepsTaken));
         CodeControl.Message.Send(new LevelCompleteEvent(timePlayingLevel, stepsTaken));
+        DispatchPlaySFXRequestEvent("levelwin", 0.5f);
     }
 
     private void DispatchGridRequestEvent()
     {
         CodeControl.Message.Send(new GenerateGridRequestEvent(currentLevel));
     }
+
+    private void DispatchPlaySFXRequestEvent(string sfxName, float volume)
+    {
+        CodeControl.Message.Send(new PlaySFXRequestEvent(sfxName, volume));
+    }
+
+    private void DispatchPlayMusicRequestEvent()
+    {
+        CodeControl.Message.Send(new PlayMusicRequestEvent("enterthemaze"));
+    }
+
 }

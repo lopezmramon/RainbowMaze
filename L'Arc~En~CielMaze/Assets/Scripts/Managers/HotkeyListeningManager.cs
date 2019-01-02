@@ -29,6 +29,10 @@ public class HotkeyListeningManager : MonoBehaviour
         {
             inputMessenger.DispatchPlayerMoveRequestEvent(Direction.West);
         }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+           // inputMessenger.DispatchPlayerPointOfViewChangeRequestEvent();
+        }
     }
 
 }

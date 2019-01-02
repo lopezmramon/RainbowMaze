@@ -31,7 +31,13 @@ public class GridManager : MonoBehaviour
         if (!currentPlayerCell.walls[obj.direction])
         {
             currentPlayerCell = desiredDestinationCell;
+            DispatchPlaySFXRequestEvent("step", 0.2f);
         }
+    }
+
+    private void DispatchPlaySFXRequestEvent(string sfxName, float volume)
+    {
+        CodeControl.Message.Send(new PlaySFXRequestEvent(sfxName, volume));
     }
 
     private void DispatchPlayerMoveEvent(Direction direction, bool approved)

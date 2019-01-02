@@ -5,12 +5,13 @@ public class GridGenerator : MonoBehaviour
 {
     public int width, height, objectiveNumber, exitNumber;
     private Grid grid;
-    public GameObject tilePrefab, wallPrefab;
     public Cell[,] generatedCells;
     public Cell playerCell;
     public Transform gridParent;
     public Material[] floorMaterials;
-    private RainbowColors currentColor;
+    public Material enemyMaterial;
+    public Material exitMaterial;
+    private RainbowColor currentColor;
 
     private void Awake()
     {
@@ -72,7 +73,9 @@ public class GridGenerator : MonoBehaviour
         for (int i = 0; i < objectiveAmount; i++)
         {
             Cell cell = grid.RandomCell(playerCell, 3);
+            cell.occupied = true;
             GameObject objective = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objective.name = "Objective";
             objective.AddComponent<ObjectiveController>();
             objective.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
             objective.transform.SetParent(gridParent);
@@ -86,8 +89,10 @@ public class GridGenerator : MonoBehaviour
         {
             Cell cell = grid.RandomCell(playerCell, 5);
             GameObject exit = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            exit.name = "Exit";
+            cell.occupied = true;
             exit.AddComponent<ExitController>();
-            exit.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
+            exit.GetComponent<Renderer>().material = Instantiate(exitMaterial);
             exit.transform.SetParent(gridParent);
             exit.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
         }
@@ -98,9 +103,11 @@ public class GridGenerator : MonoBehaviour
         for (int i = 0; i < enemyAmount; i++)
         {
             Cell cell = grid.RandomCell(playerCell, 3);
-            GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            enemy.AddComponent<EnemyController>().Initialize(new Enemy(1, EnemyType.Normal));
-            enemy.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
+            cell.occupied = true;
+            GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            enemy.name = "Enemy";
+            enemy.AddComponent<EnemyController>().Initialize(new Enemy(Random.Range(1, 2), EnemyType.Normal));
+            enemy.GetComponent<Renderer>().material = Instantiate(enemyMaterial);
             enemy.transform.SetParent(gridParent);
             enemy.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
         }

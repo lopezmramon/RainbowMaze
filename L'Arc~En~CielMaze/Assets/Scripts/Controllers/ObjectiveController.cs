@@ -2,6 +2,8 @@
 
 public class ObjectiveController : BasePickup
 {
+    public RainbowColor color;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -12,6 +14,6 @@ public class ObjectiveController : BasePickup
 
     private void DispatchObjectiveCollectedEvent()
     {
-        CodeControl.Message.Send(new ObjectiveCollectedEvent(transform));
+        CodeControl.Message.Send(new ObjectiveCollectedEvent(transform, color));
     }
 }

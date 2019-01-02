@@ -8,6 +8,7 @@ public class EnemyController : BasePickup
     public void Initialize(Enemy enemy)
     {
         this.enemy = enemy;
+        transform.localScale *= 2;
     }
 
     private void OnTriggerEnter(Collider other)
