@@ -12,6 +12,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        CodeControl.Message.AddListener<LoadLevelRequestEvent>(OnLevelLoadRequested);
         CodeControl.Message.AddListener<ObjectiveCollectedEvent>(OnObjectiveCollected);
         CodeControl.Message.AddListener<PlayerMoveResolvedEvent>(OnPlayerMoveResolved);
         CodeControl.Message.AddListener<ExitContactEvent>(OnExitContact);
@@ -19,8 +20,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        currentLevel = new Level(10, 10, 5, 5, 1, RainbowColor.Violet);
-        DispatchGridRequestEvent();
+      
         DispatchPlayMusicRequestEvent();
     }
 
@@ -30,6 +30,12 @@ public class LevelManager : MonoBehaviour
         {
             timePlayingLevel += Time.deltaTime;
         }
+    }
+
+    private void OnLevelLoadRequested(LoadLevelRequestEvent obj)
+    {
+        currentLevel = new Level(10, 10, 5, 5, 1, RainbowColor.Violet);
+        DispatchGridRequestEvent();
     }
 
     private void OnPlayerMoveResolved(PlayerMoveResolvedEvent obj)
@@ -72,7 +78,7 @@ public class LevelManager : MonoBehaviour
     private void DispatchLevelCompleteEvent()
     {
         Debug.Log(string.Format("Level Completed. Time: {0}, Steps: {1}", timePlayingLevel, stepsTaken));
-        CodeControl.Message.Send(new LevelCompleteEvent(timePlayingLevel, stepsTaken));
+        CodeControl.Message.Send(new LevelCompleteEvent(timePlayingLevel, stepsTaken, currentLevel.color));
         DispatchPlaySFXRequestEvent("levelwin", 0.5f);
     }
 

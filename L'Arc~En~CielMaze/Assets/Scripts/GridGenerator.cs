@@ -35,6 +35,7 @@ public class GridGenerator : MonoBehaviour
             floorTile.transform.localPosition = new Vector3(cell.coordinates.x * 10, 0, cell.coordinates.y * 10);
             floorTile.name = string.Format("Tile {0}, {1}", cell.coordinates.x, cell.coordinates.y);
             floorTile.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor]);
+            floorTile.layer = LayerMask.NameToLayer("Floor");
             foreach (KeyValuePair<Direction, bool> wall in cell.walls)
             {
                 if (wall.Value)
@@ -52,6 +53,7 @@ public class GridGenerator : MonoBehaviour
                     scale.z = position.z == 0 ? 10 : 1;
                     wallForTile.transform.localScale = scale;
                     wallForTile.name = string.Format("{0} Wall for Tile {1}, {2}", wall.Key.ToString(), cell.coordinates.x, cell.coordinates.y);
+                    wallForTile.layer = LayerMask.NameToLayer("Wall");
                 }
             }
         }
@@ -106,6 +108,7 @@ public class GridGenerator : MonoBehaviour
             cell.occupied = true;
             GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             enemy.name = "Enemy";
+            enemy.layer = LayerMask.NameToLayer("Obstacle");
             enemy.AddComponent<EnemyController>().Initialize(new Enemy(Random.Range(1, 2), EnemyType.Normal));
             enemy.GetComponent<Renderer>().material = Instantiate(enemyMaterial);
             enemy.transform.SetParent(gridParent);

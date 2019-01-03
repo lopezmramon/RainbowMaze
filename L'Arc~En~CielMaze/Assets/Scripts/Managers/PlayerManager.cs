@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerStats playerStats;
     private int objectivesCollected = 0;
     private Level level;
-
+    private FoW.FogOfWarUnit fowUnit;
     private void Awake()
     {
         CodeControl.Message.AddListener<GeneratePlayerCharacterRequestEvent>(OnPlayerCharacterGenerationRequested);
@@ -58,12 +58,13 @@ public class PlayerManager : MonoBehaviour
     {
         objectivesCollected = 0;
         GameObject playerCharacter = Instantiate(playerCharacterPrefab, obj.cellParent);
+        fowUnit = playerCharacter.AddComponent<FoW.FogOfWarUnit>();
+        fowUnit.circleRadius = 12.5f;
+        fowUnit.lineOfSightMask = ~0;
         player = playerCharacter.GetComponent<PlayerCharacterController>();
         player.transform.localPosition = obj.cell.SpawnOverCellLocalPosition(1);
         virtualCameras[0].LookAt = player.transform;
-        virtualCameras[0].Follow = player.transform;
-        virtualCameras[1].LookAt = player.transform;
-        virtualCameras[1].Follow = player.transform;
+        virtualCameras[0].Follow = player.transform;      
         DispatchPlaySFXRequestEvent("playerborn", 0.5f);
     }
 
