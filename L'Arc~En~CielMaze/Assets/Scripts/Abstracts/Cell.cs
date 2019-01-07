@@ -29,8 +29,8 @@ public class Cell
         return activeWalls;
     }
 
-    public Vector3 SpawnOverCellLocalPosition(float yPos)
+    public Vector3 SpawnOverCellLocalPosition(float xOffset, float yOffset, float zOffset)
     {
-        return new Vector3(coordinates.x * 10, yPos, coordinates.y * 10);
+        return new Vector3(coordinates.x * 10 + xOffset, yOffset, coordinates.y * 10 + zOffset);
     }
 }

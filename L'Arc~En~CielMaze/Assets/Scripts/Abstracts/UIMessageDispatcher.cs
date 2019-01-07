@@ -1,8 +1,8 @@
 ﻿
 public static class UIMessageDispatcher
 {
-    public static void DispatchViewChangeRequestEvent(View view)
+    public static void DispatchViewChangeRequestEvent(View view, int usableValue)
     {
-        CodeControl.Message.Send(new ViewChangeRequestEvent(view));
+        CodeControl.Message.Send(new ViewChangeRequestEvent(view, usableValue));
     }
 }

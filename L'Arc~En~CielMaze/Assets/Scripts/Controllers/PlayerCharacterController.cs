@@ -28,11 +28,16 @@ public class PlayerCharacterController : MonoBehaviour
     public void ChangeLightRange(int range)
     {
         light.range = range;
-        light.intensity = (float)range / 6;
+        light.intensity = (float)range / 12;
     }
 
     public void ChangeLightColor(Color color)
     {
         light.color = color;
+    }
+
+    private void OnDestroy()
+    {
+        CodeControl.Message.RemoveListener<PlayerMoveResolvedEvent>(OnPlayerMoveResolved);
     }
 }

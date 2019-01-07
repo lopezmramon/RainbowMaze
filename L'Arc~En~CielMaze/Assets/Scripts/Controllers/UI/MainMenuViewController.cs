@@ -11,7 +11,7 @@ public class MainMenuViewController : MonoBehaviour
     {
         startGameButton.onClick.AddListener(() =>
         {
-            UIMessageDispatcher.DispatchViewChangeRequestEvent(View.LevelIntro);
+            UIMessageDispatcher.DispatchViewChangeRequestEvent(View.LevelIntro, 0);
         });
 
         quitGameButton.onClick.AddListener(() =>

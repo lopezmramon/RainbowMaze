@@ -6,9 +6,10 @@ public class LevelManager : MonoBehaviour
     public int objectivesCollected;
     public float timePlayingLevel;
     private int stepsTaken;
-    public ScriptableObject levels;
     private Level currentLevel;
+    private Level[] levels;
     private bool countingTime;
+    public Material[] skyboxes;
 
     private void Awake()
     {
@@ -16,12 +17,22 @@ public class LevelManager : MonoBehaviour
         CodeControl.Message.AddListener<ObjectiveCollectedEvent>(OnObjectiveCollected);
         CodeControl.Message.AddListener<PlayerMoveResolvedEvent>(OnPlayerMoveResolved);
         CodeControl.Message.AddListener<ExitContactEvent>(OnExitContact);
+        levels = new Level[]
+        {
+            new Level(8, 8, 4, 3, 1, RainbowColor.Violet),
+            new Level(9, 9, 5, 4, 1, RainbowColor.Indigo),
+            new Level(10, 10,6, 5, 1, RainbowColor.Blue),
+            new Level(10, 10, 7, 6, 1, RainbowColor.Green),
+            new Level(10, 10, 7, 6, 1, RainbowColor.Yellow),
+            new Level(11, 11, 7, 7, 2, RainbowColor.Orange),
+            new Level(12, 12, 8, 9, 2, RainbowColor.Red),
+        };
     }
 
     private void Start()
     {
-      
         DispatchPlayMusicRequestEvent();
+        SwitchToRandomSkybox();
     }
 
     private void Update()
@@ -34,7 +45,9 @@ public class LevelManager : MonoBehaviour
 
     private void OnLevelLoadRequested(LoadLevelRequestEvent obj)
     {
-        currentLevel = new Level(10, 10, 5, 5, 1, RainbowColor.Violet);
+        currentLevel = levels[(int)obj.color];
+        objectivesCollected = 0;
+        timePlayingLevel = 0;
         DispatchGridRequestEvent();
     }
 
@@ -45,14 +58,18 @@ public class LevelManager : MonoBehaviour
             stepsTaken++;
             if (!countingTime) countingTime = true;
         }
-
     }
 
     private void OnExitContact(ExitContactEvent obj)
     {
-        if (currentLevel.objectiveAmount > objectivesCollected) return;
+        if (currentLevel.objectiveAmount > objectivesCollected)
+        {
+            DispatchPlaySFXRequestEvent("hurt" + UnityEngine.Random.Range(1, 3).ToString(), 0.5f);
+            return;
+        }
         DispatchLevelCompleteEvent();
         countingTime = false;
+        Destroy(obj.transform.gameObject);
     }
 
     private void OnObjectiveCollected(ObjectiveCollectedEvent obj)
@@ -68,6 +85,12 @@ public class LevelManager : MonoBehaviour
         {
             DispatchPlaySFXRequestEvent("objective" + objectivesCollected.ToString(), 0.4f);
         }
+        DispatchPlayerObjectiveCollectedAmountChange();
+    }
+
+    private void SwitchToRandomSkybox()
+    {
+        Camera.main.GetComponent<Skybox>().material = skyboxes[UnityEngine.Random.Range(0, skyboxes.Length)];
     }
 
     private void DispatchAllObjectivesCollectedEvent()
@@ -97,4 +120,8 @@ public class LevelManager : MonoBehaviour
         CodeControl.Message.Send(new PlayMusicRequestEvent("enterthemaze"));
     }
 
+    private void DispatchPlayerObjectiveCollectedAmountChange()
+    {
+        CodeControl.Message.Send(new PlayerObjectiveCollectedAmountChange(currentLevel.objectiveAmount, objectivesCollected));
+    }
 }

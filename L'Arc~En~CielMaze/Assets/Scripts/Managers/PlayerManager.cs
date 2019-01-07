@@ -29,11 +29,13 @@ public class PlayerManager : MonoBehaviour
     private void OnGridGenerationRequested(GenerateGridRequestEvent obj)
     {
         level = obj.level;
+        FoW.FogOfWar.instances[0].Reinitialize();
     }
 
     private void OnObjectiveCollected(ObjectiveCollectedEvent obj)
     {
         objectivesCollected++;
+        ChangePlayerHealth(1);
         Color rainbowColorWithCorrectIntensity = RainbowColorReference.UsableRainbowColor(obj.color);
         rainbowColorWithCorrectIntensity.a = 255 * ((objectivesCollected + 1) / level.objectiveAmount);
         player.ChangeLightColor(rainbowColorWithCorrectIntensity);
@@ -41,30 +43,36 @@ public class PlayerManager : MonoBehaviour
 
     private void OnEnemyContact(EnemyContactEvent obj)
     {
-        playerStats.health -= obj.enemy.damage;
-        player.ChangeLightRange(playerStats.health);
-        if (playerStats.health > 0)
+        ChangePlayerHealth(-obj.enemy.damage);
+        Destroy(obj.transform.gameObject);
+    }
+    private void ChangePlayerHealth(int amount)
+    {
+        playerStats.currentHealth += amount;
+        player.ChangeLightRange(playerStats.currentHealth);
+        if (playerStats.currentHealth > 0)
         {
-            Destroy(obj.transform.gameObject);
-            DispatchPlaySFXRequestEvent("hurt" + UnityEngine.Random.Range(1, 3).ToString(), 0.5f);
+            DispatchPlayerHealthChangedEvent();
+            if (amount < 0) DispatchPlaySFXRequestEvent("hurt" + UnityEngine.Random.Range(1, 3).ToString(), 0.5f);
         }
-        else if (playerStats.health <= 0)
+        else if (playerStats.currentHealth <= 0)
         {
             DispatchPlayerDeathEvent();
         }
     }
-
     private void OnPlayerCharacterGenerationRequested(GeneratePlayerCharacterRequestEvent obj)
     {
         objectivesCollected = 0;
+        playerStats.currentHealth = playerStats.maxHealth;
         GameObject playerCharacter = Instantiate(playerCharacterPrefab, obj.cellParent);
         fowUnit = playerCharacter.AddComponent<FoW.FogOfWarUnit>();
-        fowUnit.circleRadius = 12.5f;
+        fowUnit.circleRadius = 15.5f;
         fowUnit.lineOfSightMask = ~0;
         player = playerCharacter.GetComponent<PlayerCharacterController>();
-        player.transform.localPosition = obj.cell.SpawnOverCellLocalPosition(1);
-        virtualCameras[0].LookAt = player.transform;
-        virtualCameras[0].Follow = player.transform;      
+        player.transform.localPosition = obj.cell.SpawnOverCellLocalPosition(0, 2, 0);
+        virtualCameras[1].LookAt = player.transform;
+        virtualCameras[1].Follow = player.transform;
+        CodeControl.Message.Send(new SwitchCameraRequestEvent());
         DispatchPlaySFXRequestEvent("playerborn", 0.5f);
     }
 
@@ -76,5 +84,10 @@ public class PlayerManager : MonoBehaviour
     private void DispatchPlaySFXRequestEvent(string sfxName, float volume)
     {
         CodeControl.Message.Send(new PlaySFXRequestEvent(sfxName, volume));
+    }
+
+    private void DispatchPlayerHealthChangedEvent()
+    {
+        CodeControl.Message.Send(new PlayerHealthChange(playerStats.maxHealth, playerStats.currentHealth));
     }
 }

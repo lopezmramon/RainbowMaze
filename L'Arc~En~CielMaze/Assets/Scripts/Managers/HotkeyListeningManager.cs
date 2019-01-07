@@ -13,19 +13,19 @@ public class HotkeyListeningManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             inputMessenger.DispatchPlayerMoveRequestEvent(Direction.South);
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             inputMessenger.DispatchPlayerMoveRequestEvent(Direction.North);
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             inputMessenger.DispatchPlayerMoveRequestEvent(Direction.East);
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             inputMessenger.DispatchPlayerMoveRequestEvent(Direction.West);
         }
@@ -34,5 +34,4 @@ public class HotkeyListeningManager : MonoBehaviour
            // inputMessenger.DispatchPlayerPointOfViewChangeRequestEvent();
         }
     }
-
 }

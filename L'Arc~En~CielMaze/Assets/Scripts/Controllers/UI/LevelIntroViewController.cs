@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class LevelIntroViewController : MonoBehaviour
     {
         this.color = color;
         animationTimer = 5;
+        DispatchLevelIntroRequestEvent(color);
     }
 
     private void Update()
@@ -19,13 +21,18 @@ public class LevelIntroViewController : MonoBehaviour
         if (animationTimer < 0)
         {
             DispatchLoadLevelRequestEvent();
-            UIMessageDispatcher.DispatchViewChangeRequestEvent(View.Gameplay);
+            UIMessageDispatcher.DispatchViewChangeRequestEvent(View.Gameplay, (int)color);
             animationTimer += 10;
         }
     }
 
     private void DispatchLoadLevelRequestEvent()
     {
-        CodeControl.Message.Send(new LoadLevelRequestEvent(RainbowColor.Violet));
+        CodeControl.Message.Send(new LoadLevelRequestEvent(color));
+    }
+
+    private void DispatchLevelIntroRequestEvent(RainbowColor color)
+    {
+        CodeControl.Message.Send(new LevelIntroRequestEvent(color));
     }
 }

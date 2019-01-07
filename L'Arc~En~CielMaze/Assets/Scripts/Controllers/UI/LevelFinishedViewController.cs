@@ -14,7 +14,7 @@ public class LevelFinishedViewController : MonoBehaviour
     {
         mainMenuButton.onClick.AddListener(() =>
         {
-            UIMessageDispatcher.DispatchViewChangeRequestEvent(View.MainMenu);
+            UIMessageDispatcher.DispatchViewChangeRequestEvent(View.MainMenu, 0);
         });
         quitButton.onClick.AddListener(() =>
         {
@@ -33,6 +33,12 @@ public class LevelFinishedViewController : MonoBehaviour
     private void ConfigureNextLevelButton(RainbowColor color)
     {
         nextLevelButton.onClick.RemoveAllListeners();
-
+        RainbowColor requestColor = (RainbowColor)((int)color + 1);
+        nextLevelButton.onClick.AddListener(() =>
+        {
+            CodeControl.Message.Send(new ViewChangeRequestEvent(View.LevelIntro, (int)requestColor));
+        });
     }
+
+
 }

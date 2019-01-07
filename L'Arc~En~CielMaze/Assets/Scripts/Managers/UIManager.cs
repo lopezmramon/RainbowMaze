@@ -27,6 +27,10 @@ public class UIManager : MonoBehaviour
     private void OnViewChangeRequested(ViewChangeRequestEvent obj)
     {
         ChangeView(obj.view);
+        if (obj.view == View.LevelIntro)
+        {
+            views[(int)obj.view].GetComponent<LevelIntroViewController>().Initialize((RainbowColor)obj.usableValue);
+        }
     }
 
     private void ChangeView(View view)

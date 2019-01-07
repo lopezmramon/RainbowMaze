@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
@@ -12,11 +13,21 @@ public class GridGenerator : MonoBehaviour
     public Material enemyMaterial;
     public Material exitMaterial;
     private RainbowColor currentColor;
+    public GameObject[] enemyPrefabs;
 
     private void Awake()
     {
         CodeControl.Message.AddListener<GenerateGridRequestEvent>(OnGenerateGridRequested);
+        CodeControl.Message.AddListener<LevelCompleteEvent>(OnLevelCompleted);
         grid = new Grid();
+    }
+
+    private void OnLevelCompleted(LevelCompleteEvent obj)
+    {
+        foreach(Transform child in gridParent)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     private void OnGenerateGridRequested(GenerateGridRequestEvent obj)
@@ -79,9 +90,10 @@ public class GridGenerator : MonoBehaviour
             GameObject objective = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             objective.name = "Objective";
             objective.AddComponent<ObjectiveController>();
-            objective.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor + 3]);
+            objective.GetComponent<Renderer>().material = Instantiate(floorMaterials[(int)currentColor]);
             objective.transform.SetParent(gridParent);
-            objective.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
+            objective.transform.localPosition = cell.SpawnOverCellLocalPosition(0, 2, 0);
+            objective.transform.localScale *= 2;
         }
     }
 
@@ -96,7 +108,8 @@ public class GridGenerator : MonoBehaviour
             exit.AddComponent<ExitController>();
             exit.GetComponent<Renderer>().material = Instantiate(exitMaterial);
             exit.transform.SetParent(gridParent);
-            exit.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
+            exit.transform.localPosition = cell.SpawnOverCellLocalPosition(0, 2, 0);
+            exit.transform.localScale *= 2;
         }
     }
 
@@ -106,13 +119,13 @@ public class GridGenerator : MonoBehaviour
         {
             Cell cell = grid.RandomCell(playerCell, 3);
             cell.occupied = true;
-            GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            GameObject enemy = Instantiate(enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)]);
             enemy.name = "Enemy";
             enemy.layer = LayerMask.NameToLayer("Obstacle");
-            enemy.AddComponent<EnemyController>().Initialize(new Enemy(Random.Range(1, 2), EnemyType.Normal));
-            enemy.GetComponent<Renderer>().material = Instantiate(enemyMaterial);
+            enemy.AddComponent<EnemyController>().Initialize(new Enemy(UnityEngine.Random.Range(1, 4), EnemyType.Normal));
             enemy.transform.SetParent(gridParent);
-            enemy.transform.localPosition = cell.SpawnOverCellLocalPosition(2);
+            enemy.transform.localPosition = cell.SpawnOverCellLocalPosition(0, 3, 4);
+
         }
     }
 

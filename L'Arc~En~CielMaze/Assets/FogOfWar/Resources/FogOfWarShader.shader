@@ -130,7 +130,7 @@
 			{
 				// for VR
 				i.uv = UnityStereoTransformScreenSpaceTex(i.uv);
-
+			float4 fogcolor = _FogColor;
 				float rawdpth;
 				float3 viewspacepos = ComputeViewSpacePosition(i.uv, i.interpolatedRay, rawdpth);
 				float3 wsPos = mul(_InverseView, float4(viewspacepos, 1)).xyz;
@@ -158,14 +158,14 @@
 
 				#ifdef TEXTUREFOG
 					// raycast plane
-					float3 rayorigin = _CameraWS;
-					float3 raydir = normalize(i.interpolatedRay);
-					float3 planeorigin = float3(0, _FogColorTexScale.y, 0);
-					float3 planenormal = float3(0, 1, 0);
-					float t = dot(planeorigin - rayorigin, planenormal) / dot(planenormal, raydir);
-					float4 fogcolor = tex2D(_FogColorTex, (rayorigin + raydir * t).xz * _FogColorTexScale.x);
+				//	float3 rayorigin = _CameraWS;
+					//float3 raydir = normalize(i.interpolatedRay);
+					//float3 planeorigin = float3(0, _FogColorTexScale.y, 0);
+					//float3 planenormal = float3(0, 1, 0);
+					//float t = dot(planeorigin - rayorigin, planenormal) / dot(planenormal, raydir);
+					//float4 fogcolor = tex2D(_FogColorTex, (rayorigin + raydir * t).xz * _FogColorTexScale.x);
 				#else
-					float4 fogcolor = _FogColor;
+				//	float4 fogcolor = _FogColor;
 				#endif
 				
 				#ifndef FOGFARPLANE

@@ -1,11 +1,12 @@
 ﻿
 public class PlayerStats
 {
-    public int health, damage;
+    public int maxHealth,currentHealth, damage;
 
-    public PlayerStats(int health, int damage)
+    public PlayerStats(int maxHealth, int damage)
     {
-        this.health = health;
+        this.maxHealth = maxHealth;
+        currentHealth = maxHealth;
         this.damage = damage;
     }
 }

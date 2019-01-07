@@ -9,6 +9,7 @@ public class EnemyController : BasePickup
     {
         this.enemy = enemy;
         transform.localScale *= 2;
+        GetComponent<BoxCollider>().size = new Vector3(3f, 3, 3);
     }
 
     private void OnTriggerEnter(Collider other)
